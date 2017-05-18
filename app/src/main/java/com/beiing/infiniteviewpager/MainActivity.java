@@ -9,22 +9,19 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jackwharton_salvage.RecyclingPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
-    private List<View> imageViews;
+//    private List<View> imageViews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         viewPager = (ViewPager) findViewById(R.id.view_pager);
-        initImages();
+//        initImages();
 
         RecyclePagerAdapter recyclePagerAdapter = new RecyclePagerAdapter();
         viewPager.setAdapter(recyclePagerAdapter);
@@ -32,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
                 (recyclePagerAdapter.getRealCount() * 50 % recyclePagerAdapter.getRealCount()));
     }
 
-    class RecyclePagerAdapter extends RecyclingPagerAdapter{
+    private class RecyclePagerAdapter extends RecyclingPagerAdapter{
         /**
          * get really position
          *
@@ -49,22 +46,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public int getRealCount() {
-            return imageViews.size();
+            return Data.imageUrls.size();
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup container) {
-            return imageViews.get(getPosition(position));
-        }
-    }
-
-
-    private void initImages() {
-        imageViews = new ArrayList<>();
-        for (String url : Data.imageUrls) {
-            ImageView imageView = new ImageView(this);
-            Glide.with(this).load(url).into(imageView);
-            imageViews.add(imageView);
+            String url = Data.imageUrls.get(getPosition(position));
+            if(convertView == null){
+                convertView = new ImageView(MainActivity.this);
+                ((ImageView)convertView).setScaleType(ImageView.ScaleType.CENTER_CROP);
+                Glide.with(MainActivity.this).load(url).into((ImageView) convertView);
+            } else {
+                Glide.with(MainActivity.this).load(url).into((ImageView) convertView);
+            }
+            return convertView;
         }
     }
 
